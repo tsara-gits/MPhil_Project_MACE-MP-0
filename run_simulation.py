@@ -1,12 +1,11 @@
 import os
 import sys
 import torch
-import warnings
 from setup_simulation import *
 
-warnings.simplefilter(action='ignore', category=FutureWarning)
 
-def main():
+def ask_user_to_input_parameters(output_dir_default):
+    
     print("""
     
     Welcome to the simulation of a mini-protein with the foundational machine learning model MACE-MP-0! 
@@ -50,7 +49,6 @@ def main():
     n_steps = int(input(" - Number of simulation steps (1 step = 1 fs): "))                                 # 1 ns = 1,000,000 steps (1 fs per step)
     sampling_freq = int(input(" - Sampling frequency (sampling the system every x steps): "))               # 1 ps = 1000 fs, so sample every 1000 steps 
 
-    output_dir_default = "/local/data/public/st958/PROTEIN_SIM2/"
     change_output_dir = input(f" - Default directory to store the MD trajectory: {output_dir_default}. Change it? (yes/no): ")
     if change_output_dir.lower() == "yes":
         output_dir_base = input(" - Path to the new directory for storing the MD trajectory: ")
@@ -58,17 +56,41 @@ def main():
         output_dir_base = output_dir_default
     print("\n Starting simulation! ")
 
-    # Hard-coded simulation parameters
-    tolerance = 2               # Packmol packing tolerance for solvation setup, minimum allowed distance between molecules (Å)
-    model = 'medium'            # MACE potential model used for the simulation
-    dispersion = False          # Enables dispersion interactions if set to True
-    enable_cueq = False         # Enables charge equilibration if set to True
-    T_init = 300                # Initial temperature of the simulation (K)
-    timestep = 1.0 * units.fs   # Simulation timestep (fs)
-    friction = 0.01 / units.fs  # Friction coefficient for Langevin dynamics (fs^-1)
+    user_inputed_params = {"protein_name": protein_name,
+                        "additional_name": additional_name,
+                        "solvated": solvated,
+                        "sim_box_margin": sim_box_margin,
+                        "num_waters": num_waters,
+                        "n_steps": n_steps,
+                        "sampling_freq": sampling_freq,
+                        "output_dir_base": output_dir_base}
 
+    return user_inputed_params
+  
+
+def run_simulation(user_inputed_params, preset_params):
+    
+    # Extract the parameters from the dictionaries
+    protein_name = user_inputed_params["protein_name"]
+    additional_name = user_inputed_params["additional_name"]
+    solvated = user_inputed_params["solvated"]
+    sim_box_margin = user_inputed_params["sim_box_margin"]
+    num_waters = user_inputed_params["num_waters"]
+    n_steps = user_inputed_params["n_steps"]
+    sampling_freq = user_inputed_params["sampling_freq"]
+    output_dir_base = user_inputed_params["output_dir_base"]
+
+    tolerance = preset_params["tolerance"]
+    model = preset_params["model"]
+    dispersion = preset_params["dispersion"]
+    enable_cueq = preset_params["enable_cueq"]
+    T_init = preset_params["T_init"]
+    timestep = preset_params["timestep"]
+    friction = preset_params["friction"]
+    
     # Define paths
     env = "solv" if solvated else "unsolv"
+    current_dir = os.getcwd()
     protein_file = os.path.join(current_dir, "INPUTS", protein_name)
     water_pdb = os.path.join(current_dir, "INPUTS", "water.pdb")
     protein_name = protein_name.replace(".pdb", "")
@@ -93,6 +115,19 @@ def main():
     # Run the simulation with centering
     run_NVT_ASE_simulation(protein_name, num_waters, sim_box_margin, solvated, initial_structure, cell, traj_file, data_file, T_init, timestep, n_steps, friction, 
                            sampling_freq, model, dispersion, enable_cueq, translation_vector)
+
+def main():
+    output_dir_default = "/local/data/public/st958/PROTEIN_SIM2/"
+    preset_params = {"tolerance": 2,             # Packmol packing tolerance for solvation setup, minimum allowed distance between molecules (Å)
+                    "model": 'medium',           # MACE potential model used for the simulation
+                    "dispersion": False,         # Enables dispersion interactions if set to True
+                    "enable_cueq": False,        # Enables charge equilibration if set to True
+                    "T_init": 300,               # Initial temperature of the simulation (K)
+                    "timestep": 1.0 * units.fs,  # Simulation timestep (fs)
+                    "friction": 0.01 / units.fs  # Friction coefficient for Langevin dynamics (fs^-1)
+                    }
+    user_inputed_params = ask_user_to_input_parameters(output_dir_default)
+    run_simulation(user_inputed_params, preset_params)
 
 if __name__ == "__main__":
     main()
