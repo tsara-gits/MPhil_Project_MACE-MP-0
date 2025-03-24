@@ -3,9 +3,16 @@ import sys
 import torch
 from setup_simulation import *
 
+'''
+This scipt executes the functions in setup_simulation.py. 
+It prompts the user to define parameters, then runs the simulation. 
+The script also uses parameters that are hard-coded in the functionon, named 'preset_params', 
+those can be found in the main funciton.
+'''
 
+#-------------- User input parameters ----------------------
 def ask_user_to_input_parameters(output_dir_default):
-    
+
     print("""
     
     Welcome to the simulation of a mini-protein with the foundational machine learning model MACE-MP-0! 
@@ -66,7 +73,10 @@ def ask_user_to_input_parameters(output_dir_default):
                         "output_dir_base": output_dir_base}
 
     return user_inputed_params
-  
+
+
+
+# ------------ Function that runs the MD simulation using the defined paramters and functions from setup_simulation.py  ------------
 
 def run_simulation(user_inputed_params, preset_params):
     
@@ -116,6 +126,9 @@ def run_simulation(user_inputed_params, preset_params):
     run_NVT_ASE_simulation(protein_name, num_waters, sim_box_margin, solvated, initial_structure, cell, traj_file, data_file, T_init, timestep, n_steps, friction, 
                            sampling_freq, model, dispersion, enable_cueq, translation_vector)
 
+
+
+# -------------------- Main function with preset parameters ----------------------
 def main():
     output_dir_default = "/local/data/public/st958/PROTEIN_SIM2/"
     preset_params = {"tolerance": 2,             # Packmol packing tolerance for solvation setup, minimum allowed distance between molecules (Å)
