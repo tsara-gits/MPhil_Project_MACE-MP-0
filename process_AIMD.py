@@ -3,36 +3,40 @@ import numpy as np
 import matplotlib.pyplot as plt
 from ase.io import read
 
+'''
+A script to calculate the the radius of gyration vs time of the AIMD reference data, found at traj_file.
+'''
+
 def main():
     # Paths and settings
     traj_file = "/home/raid/st958/mphil_assignment_mace/PROTEIN_SIM2/INPUTS/5awl_AIMD_traj.pdb"
     output_dir = "/home/raid/st958/mphil_assignment_mace/PROTEIN_SIM2/5awl_AIMD"
-    os.makedirs(output_dir, exist_ok=True)  # Ensure the directory exists
-    timestep = 1.0  # Assuming 1 fs timestep
+    os.makedirs(output_dir, exist_ok=True) 
+    timestep = 1.0  # 1 fs timestep
     solvated = False
     protein_name = "AIMD_chignolin"
-    max_x = 1000  # Set max x-axis limit for the plot (adjust as needed, None for auto)
+    max_x = 1000 
 
     # Calculate radius of gyration
-    frames = read(traj_file, index=":")  # ":" loads all frames in ASE
+    frames = read(traj_file, index=":") 
     rgs = []
     for atoms in frames:
         positions = atoms.get_positions()
-        com = np.mean(positions, axis=0)  # Compute center of mass
-        rg = np.sqrt(np.mean(np.sum((positions - com) ** 2, axis=1)))  # Compute Rg
+        com = np.mean(positions, axis=0)  # center of mass
+        rg = np.sqrt(np.mean(np.sum((positions - com) ** 2, axis=1)))  
         rgs.append(rg)
 
     rgs = np.array(rgs)
-    steps = np.arange(len(rgs))  # Time steps
+    steps = np.arange(len(rgs))  
 
     # Save rg values and steps to a txt file
     rg_output_file = os.path.join(output_dir, "rg_values.txt")
-    np.savetxt(rg_output_file, np.column_stack((steps, rgs)),  # Changed `rg_vals` -> `rgs`
+    np.savetxt(rg_output_file, np.column_stack((steps, rgs)),  
             header="Time(ps) Radius_of_Gyration(A)", fmt="%.6f")
 
     # Plot results
     plt.figure(figsize=(8, 6))
-    plt.plot(steps, rgs, linestyle="-", color="tab:red")  # Changed `rg_vals` -> `rgs`
+    plt.plot(steps, rgs, linestyle="-", color="tab:red")  
     plt.xlabel("Time (ps)") 
     plt.ylabel("Radius of Gyration (Å)")
     if solvated:
