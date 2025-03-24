@@ -6,7 +6,23 @@ from ase.io import read, write
 
 TIMESTEP = 1.0 * units.fs  # 1 fs per step
 
+'''
+This function processes the output trajectory files of the MD simulations. The path of folder containing the 
+trajectories are defined in the main as 'traj_dir/SIM_NAME', where the SIM_NAMEs are the following:
+    - 5awl_folded_solv
+    - 5awl_folded_unsolv
+    - 5awl_unfolded_solv
+    - 5awl_unfolded_unsolv
+    - 1uao_neutral_unsolv
+    - 1uao_unsolv
 
+The script calculates the radius of gyration of each simulation, and plots it as a function of time. Additionally, it also
+extracts the energies and temperatures of the simulation and plots them. The plots are saved at 'current_dir/SIM_NAME'.
+'''
+
+'''
+---------------- Extract the protein coordinates from the trajectories -----------------
+'''
 def extract_protein_frames(traj_file):
     """Removes all lines containing 'MOL' in the 4th column from a PDB trajectory file and saves the cleaned version."""
     
@@ -44,6 +60,10 @@ def filter_atoms(traj_file, exclude_atom_idx):
 
     return filtered_traj_file
 
+
+''''
+-------------------------- Get radius of gyration, temperature and energies ------------------------
+''''
 def get_data(data_file):
     """Extracts simulation time and temperature from the data file using hardcoded timestep."""
     steps, temps, Epots, Ekins = [], [], [], []
@@ -77,6 +97,11 @@ def save_rg_data(steps, rg_vals, output_dir):
                header="Time (ps) Radius_of_Gyration (Å)", fmt="%.6f")
     print(f"Saved Rg data to {rg_output_file}")
 
+
+
+''''
+---------------------------------- Functions for plotting ----------------------------------------
+''''
 def plot_data(x_vals, y_vals, xlabel, ylabel, title, filename, output_dir_analysis):
     """Generic function to plot and save simulation data."""
     plt.figure(figsize=(8, 6))
@@ -129,6 +154,10 @@ def process_simulation(traj_file, data_file, output_dir_analysis, output_dir_tra
     plot_data(steps, Ekins, "Time (ps)", "Kinetic Energy (eV)", 
               f"Kinetic Energy vs. Time (ns), {protein_name} {'solvated' if solvated else 'not-solvated'}", 
               "plot_Ekins.png", output_dir_analysis)
+
+''''
+----------------------------------- Main function --------------------------------------
+''''
 
 def main():
     protein_names = ["5awl_folded", "5awl_unfolded", "1uao", "1uao_neutral"]
