@@ -5,7 +5,7 @@ from ase.io import read
 
 '''
 A script to calculate the the radius of gyration vs time of the AIMD reference data, found at traj_file.
-The code saves the results at output_dir/plot_rg.png
+The code saves the results at output_dir/rg_values.txt and plots it at output_dir/plot_rg.png.
 '''
 
 def main():
