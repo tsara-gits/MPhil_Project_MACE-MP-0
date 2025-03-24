@@ -8,6 +8,7 @@ The following packages are used in this project in a Python environment 3.12.3:
   - mace.calculators (MACE package) 0.3.10
   - torch (PyTorch) 2.5.1
   - packmol (https://m3g.github.io/packmol/)
+  - rdkit 2024.09.5
 
 
 ## Input files
