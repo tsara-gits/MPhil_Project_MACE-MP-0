@@ -10,6 +10,18 @@ from mace.calculators import mace_mp
 from ase.io import read, write
 import time
 
+
+''''
+This script contains the key funcitons to set up the molecular dynamics simulation:
+
+    - get_simulation_box:                       calculating the simulation box dimensions
+    - write_packmol_script, solvate_protein():  solvating the the system
+    - run_NVT_ASE_simulation:                   running the simulation using the ASE MD package
+''''
+
+
+#----------------------- Calculating the simulation box dimensions ---------------------------
+
 def get_simulation_box(protein_file, sim_box_margin):
     """
     Computes the simulation box dimensions around the protein with a given margin,
@@ -44,6 +56,10 @@ def get_simulation_box(protein_file, sim_box_margin):
     translation_vector = np.array([0,0,0])
  
     return sim_box_coords, cell, translation_vector
+
+
+
+# ------------------------- Solvating the system --------------------------------
 
 def write_packmol_script(sim_box_coords, protein_file, water_pdb, packmol_script_path, solvated_protein_pdb, num_waters, tolerance):
     """
@@ -81,7 +97,6 @@ end structure
     print("Packmol script file created")
 
 
-
 def solvate_protein(packmol_script_path):
     """
     Runs Packmol to solvate the protein.
@@ -96,6 +111,9 @@ def solvate_protein(packmol_script_path):
         print("Packmol error:", result.stderr)
         exit(1)
     print("Solvation complete")
+
+
+# ------------------ Running the MD simulation using the ASE MD package ------------------------
 
 def run_NVT_ASE_simulation(protein_name, num_waters, sim_box_margin, solvated, initial_structure, cell, traj_file, data_file, T_init, timestep, n_steps, friction, sampling_freq, model, dispersion, enable_cueq, translation_vector):
     """
