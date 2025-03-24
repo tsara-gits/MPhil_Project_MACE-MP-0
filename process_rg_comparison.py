@@ -10,9 +10,9 @@ and plots them as one figure for comparison.
 '''
 
 
-'''
---------- Smoothing the plots ------------
-'''
+
+#-------------------- Smoothing the plots ---------------------------
+
 def moving_avg_std(data, avg_window=10):
     '''
     A function to calculate the average and standard deviation of the data over a sliding window
@@ -48,8 +48,8 @@ def moving_avg_std(data, avg_window=10):
     return np.array(bin_centers), np.array(mean_rg), np.array(std_rg)
 
 
-''' 
--------- Define maps for plotting ----------
+#--------------------------- Define maps for plotting -------------------------------
+''''
     The labels correspond to a specific initial protein conformation and simulation environment. 
     For example folded vs unfolded, solvated vs unsolvated, or ab initio reference.
     The labels are used to differentiate the conditions in the plot legends and color map.
@@ -76,9 +76,10 @@ color_map = {"5awl unfolded solvated": "tab:cyan",
 legend_title_map = {0: "Initial conformation and simulation environment:",
                         1: "Initial conformation and simulation environment:"}
 
-''''
--------- Define the function to do the plotting -----------
-''''
+
+
+#------------------------- Define the function to do the plotting -------------------
+
 def plot_stacked_rg(directories, color_map, plot_orders, ylims_list, save_filename, avg_window=10):
     '''
     Plots vertically stacked subplots showing the radius of gyration over time for different simulation conditions.
@@ -183,9 +184,9 @@ def plot_stacked_rg(directories, color_map, plot_orders, ylims_list, save_filena
     print(f"Plot saved as {save_path}")
 
 
-'''
---------- Call the main function to execute the scripts ----------
-'''
+
+#---------------------------- Call the main function to execute the scripts ---------------------------
+
 def main():
     directories = {"1uao unsolvated, neutral": "/home/raid/st958/mphil_assignment_mace/PROTEIN_SIM2/1uao_neutral_unsolv",
                 "1uao unsolvated": "/home/raid/st958/mphil_assignment_mace/PROTEIN_SIM2/1uao_unsolv",
