@@ -20,11 +20,14 @@ The script calculates the radius of gyration of each simulation, and plots it as
 extracts the energies and temperatures of the simulation and plots them. The plots are saved at 'current_dir/SIM_NAME'.
 '''
 
-'''
----------------- Extract the protein coordinates from the trajectories -----------------
-'''
+
+#---------------- Extract the protein coordinates from the trajectories -----------------
+
 def extract_protein_frames(traj_file):
-    """Removes all lines containing 'MOL' in the 4th column from a PDB trajectory file and saves the cleaned version."""
+    '''
+    Removes all lines containing 'MOL' in the 4th column from a PDB trajectory file and saves the cleaned version
+    named 'water_free_traj_file' at the same folder location then the 'traj_file'
+    '''
     
     water_free_traj_file = traj_file.replace(".pdb", "_water_free.pdb")
 
@@ -38,17 +41,17 @@ def extract_protein_frames(traj_file):
     return water_free_traj_file
 
 def filter_atoms(traj_file, exclude_atom_idx):
-    """
-    Removes the atoms from the PDB trajectory file with index that in the
- excluded_atoms list, and saves the cleaned version.
+    '''
+    Removes the atoms from the PDB trajectory file with index that in the excluded_atoms list, 
+    and saves the cleaned version.
     
     Inputs:
-        traj_file (str): path to the input PDB file.
-        excluded_atoms (list of int): List of atom names to exclude (e.g., [1, 40]).
+        - traj_file (str): path to the input PDB file
+        - excluded_atoms (list of int): list of atom names to exclude (e.g., [1, 40])
     
     Outputs:
-        str: Path to the cleaned PDB file.
-    """
+        - filtered_traj_file: path to the cleaned PDB file
+    '''
     filtered_traj_file = traj_file.replace(".pdb", "_filtered.pdb")
 
     with open(traj_file, "r") as infile, open(filtered_traj_file, "w") as outfile:
@@ -61,11 +64,14 @@ def filter_atoms(traj_file, exclude_atom_idx):
     return filtered_traj_file
 
 
-''''
--------------------------- Get radius of gyration, temperature and energies ------------------------
-''''
+
+#-------------------------- Get radius of gyration, temperature and energies ------------------------
+
 def get_data(data_file):
-    """Extracts simulation time and temperature from the data file using hardcoded timestep."""
+    '''
+    Extracts simulation time and temperature from the data file using hardcoded timestep.
+    '''
+
     steps, temps, Epots, Ekins = [], [], [], []
 
     with open(data_file, "r") as f:
@@ -99,11 +105,11 @@ def save_rg_data(steps, rg_vals, output_dir):
 
 
 
-''''
----------------------------------- Functions for plotting ----------------------------------------
-''''
+
+#---------------------------------- Functions for plotting ----------------------------------------
+
 def plot_data(x_vals, y_vals, xlabel, ylabel, title, filename, output_dir_analysis):
-    """Generic function to plot and save simulation data."""
+    ''' Generic function to plot and save simulation data.'''
     plt.figure(figsize=(8, 6))
     plt.plot(x_vals / 1000, y_vals, linestyle="-", color="tab:blue")
     plt.xlabel(xlabel)
@@ -114,7 +120,7 @@ def plot_data(x_vals, y_vals, xlabel, ylabel, title, filename, output_dir_analys
     plt.close()
 
 def process_simulation(traj_file, data_file, output_dir_analysis, output_dir_traj, solvated, protein_name, exclude_atom_idx):
-    """Processes the simulation trajectory and plots various properties."""
+    '''Processes the simulation trajectory and plots various properties.'''
     
     # If solvated, remove water molecules and use the cleaned trajectory
     if solvated:
@@ -155,9 +161,9 @@ def process_simulation(traj_file, data_file, output_dir_analysis, output_dir_tra
               f"Kinetic Energy vs. Time (ns), {protein_name} {'solvated' if solvated else 'not-solvated'}", 
               "plot_Ekins.png", output_dir_analysis)
 
-''''
------------------------------------ Main function --------------------------------------
-''''
+
+#----------------------------------- Main function --------------------------------------
+
 
 def main():
     protein_names = ["5awl_folded", "5awl_unfolded", "1uao", "1uao_neutral"]
